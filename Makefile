@@ -56,8 +56,10 @@ helm-template:
 	helm template 9router charts/9router -f charts/9router/values-minikube.yaml
 	helm template qdrant-mcp charts/qdrant-mcp -f charts/qdrant-mcp/values-minikube.yaml
 	helm template context-seeder charts/context-seeder -f charts/context-seeder/values-minikube.yaml
-	helm template ollama charts/ollama -f charts/ollama/values-minikube.yaml
-	helm template ollama-models charts/ollama-models -f charts/ollama-models/values-minikube.yaml
+	helm template ollama-qwen-coder charts/ollama -f charts/ollama/values-qwen-coder.yaml
+	helm template ollama-deepseek-r1 charts/ollama -f charts/ollama/values-deepseek-r1.yaml
+	helm template ollama-gemma3 charts/ollama -f charts/ollama/values-gemma3.yaml
+	helm template ollama-models-qwen-coder charts/ollama-models -f charts/ollama-models/values-qwen-coder.yaml
 	helm template 9router-config charts/9router-config -f charts/9router-config/values-minikube.yaml
 
 deploy: verify-cluster
@@ -80,7 +82,7 @@ port-forward-qdrant-mcp:
 	kubectl -n $(NAMESPACE) port-forward svc/qdrant-mcp 8000:8000
 
 port-forward-ollama:
-	kubectl -n $(NAMESPACE) port-forward svc/ollama 11434:11434
+	kubectl -n $(NAMESPACE) port-forward svc/ollama-qwen-coder 11434:11434
 
 test-qdrant:
 	curl -sS http://127.0.0.1:6333
@@ -95,10 +97,11 @@ test-ollama:
 	curl -sS http://127.0.0.1:11434/api/generate -d '{"model":"qwen2.5-coder:7b","prompt":"write hello world in Go","stream":false}'
 
 status-models:
-	kubectl -n $(NAMESPACE) exec statefulset/ollama -- ollama list
+	kubectl -n $(NAMESPACE) get statefulset -l app.kubernetes.io/name=ollama
+	kubectl -n $(NAMESPACE) exec statefulset/ollama-qwen-coder -- ollama list
 
 pull-local-model:
-	kubectl -n $(NAMESPACE) exec statefulset/ollama -- ollama pull $(MODEL)
+	kubectl -n $(NAMESPACE) exec statefulset/ollama-qwen-coder -- ollama pull $(MODEL)
 
 logs-9router:
 	kubectl -n $(NAMESPACE) logs -l app.kubernetes.io/name=9router --tail=200
@@ -110,7 +113,7 @@ logs-qdrant:
 	kubectl -n $(NAMESPACE) logs -l app.kubernetes.io/name=qdrant --tail=200
 
 logs-ollama:
-	kubectl -n $(NAMESPACE) logs statefulset/ollama --tail=200
+	kubectl -n $(NAMESPACE) logs statefulset/ollama-qwen-coder --tail=200
 
 logs-ollama-models:
 	kubectl -n $(NAMESPACE) logs -l app.kubernetes.io/name=ollama-models --tail=200

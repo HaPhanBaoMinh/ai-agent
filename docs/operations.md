@@ -79,19 +79,21 @@ If a manual cluster change is found:
 
 ## Ollama Local Models
 
-Port-forward Ollama:
+The active local instance is `ollama-qwen-coder` with `qwen2.5-coder:7b`. `ollama-deepseek-r1` and `ollama-gemma3` are defined but scaled to zero.
+
+Port-forward the active Ollama:
 
 ```bash
 make port-forward-ollama
 ```
 
-List local models:
+List local model state:
 
 ```bash
 make status-models
 ```
 
-Pull an additional model:
+Pull an additional model into the active qwen-coder instance:
 
 ```bash
 MODEL=gemma3:12b make pull-local-model

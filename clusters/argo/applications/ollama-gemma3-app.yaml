@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: ollama
+  name: ollama-gemma3
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "10"
@@ -12,9 +12,9 @@ spec:
     targetRevision: main
     path: charts/ollama
     helm:
-      releaseName: ollama-qwen-coder
+      releaseName: ollama-gemma3
       valueFiles:
-        - values-qwen-coder.yaml
+        - values-gemma3.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: ai-platform

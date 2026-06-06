@@ -1,5 +1,5 @@
-replicaCount: 1
-fullnameOverride: ollama-qwen-coder
+replicaCount: 0
+fullnameOverride: ollama-deepseek-r1
 
 image:
   repository: ollama/ollama

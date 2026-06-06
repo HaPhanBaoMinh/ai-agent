@@ -127,8 +127,10 @@ helm template qdrant charts/qdrant -f charts/qdrant/values-minikube.yaml
 helm template 9router charts/9router -f charts/9router/values-minikube.yaml
 helm template qdrant-mcp charts/qdrant-mcp -f charts/qdrant-mcp/values-minikube.yaml
 helm template context-seeder charts/context-seeder -f charts/context-seeder/values-minikube.yaml
-helm template ollama charts/ollama -f charts/ollama/values-minikube.yaml
-helm template ollama-models charts/ollama-models -f charts/ollama-models/values-minikube.yaml
+helm template ollama-qwen-coder charts/ollama -f charts/ollama/values-qwen-coder.yaml
+helm template ollama-deepseek-r1 charts/ollama -f charts/ollama/values-deepseek-r1.yaml
+helm template ollama-gemma3 charts/ollama -f charts/ollama/values-gemma3.yaml
+helm template ollama-models-qwen-coder charts/ollama-models -f charts/ollama-models/values-qwen-coder.yaml
 helm template 9router-config charts/9router-config -f charts/9router-config/values-minikube.yaml
 helm lint charts/qdrant
 helm lint charts/9router
@@ -207,13 +209,13 @@ http://127.0.0.1:8000/sse
 
 ## Local Ollama Models
 
-This repository runs Ollama inside Minikube using CPU-first defaults. The Ollama service is internal only:
+This repository runs model-scoped Ollama instances inside Minikube using CPU-first defaults. The active service is internal only:
 
 ```txt
-http://ollama.ai-platform.svc.cluster.local:11434
+http://ollama-qwen-coder.ai-platform.svc.cluster.local:11434
 ```
 
-Local access:
+Local access to the active instance:
 
 ```bash
 make port-forward-ollama
@@ -221,11 +223,15 @@ make test-ollama
 make status-models
 ```
 
-Default pulled models:
+Configured local model instances:
 
-- `qwen2.5-coder:7b` for lightweight coding.
-- `deepseek-r1:8b` for local reasoning.
-- `gemma3:4b` for general and multilingual tasks.
+| Instance | Model | Replicas | Service |
+|---|---|---:|---|
+| `ollama-qwen-coder` | `qwen2.5-coder:7b` | 1 | `ollama-qwen-coder:11434` |
+| `ollama-deepseek-r1` | `deepseek-r1:8b` | 0 | `ollama-deepseek-r1:11434` |
+| `ollama-gemma3` | `gemma3:4b` | 0 | `ollama-gemma3:11434` |
+
+Only `qwen2.5-coder:7b` is pulled by default. Scale another model by changing its `replicaCount` in the matching `charts/ollama/values-*.yaml`, adding or enabling a matching `ollama-models` value/app, committing, pushing, and letting Argo CD sync.
 
 To pull another model manually after Ollama is running:
 
@@ -242,7 +248,7 @@ CPU-only inference is useful but slower than GPU. Keep larger 14B/32B models opt
 Default Minikube config creates the `ollama-local` provider and points it at:
 
 ```txt
-http://ollama.ai-platform.svc.cluster.local:11434
+http://ollama-qwen-coder.ai-platform.svc.cluster.local:11434
 ```
 
 Hosted providers are defined but disabled by default. To enable Gemini/OpenRouter/OpenAI/Groq, create `9router-provider-secrets`, change the provider entry to `enabled: true`, commit, push, and let Argo CD sync. Do not configure providers manually in the UI unless the same desired state is added to Git.

@@ -139,17 +139,50 @@ data:
         return payload
 
 
+    def provider_needs_update(current, desired):
+        checks = ["name", "priority", "globalPriority", "defaultModel", "isActive"]
+        for key in checks:
+            if key in desired and current.get(key) != desired.get(key):
+                return True
+        desired_specific = desired.get("providerSpecificData") or {}
+        current_specific = current.get("providerSpecificData") or {}
+        for key, value in desired_specific.items():
+            if current_specific.get(key) != value:
+                return True
+        return False
+
+
+    def provider_update_payload(desired):
+        payload = {}
+        for key in ["name", "priority", "globalPriority", "defaultModel", "isActive", "providerSpecificData", "apiKey"]:
+            if key in desired:
+                payload[key] = desired[key]
+        api_key_env = desired.get("apiKeyEnv")
+        if api_key_env and os.environ.get(api_key_env):
+            payload["apiKey"] = os.environ[api_key_env]
+        return payload
+
+
     def ensure_providers(config, cookie):
         connections = get_json(config, cookie, "/api/providers", "connections")
-        existing = {provider_key(connection) for connection in connections}
+        existing = {provider_key(connection): connection for connection in connections}
         for provider in config.get("providers", []):
             if not is_enabled(provider):
                 continue
             key = provider_key(provider)
-            if key in existing:
-                print(f"provider exists: {key[1]} ({key[0]})")
+            desired = provider_payload(provider)
+            current = existing.get(key)
+            if current:
+                if provider_needs_update(current, desired):
+                    connection_id = current.get("id")
+                    if not connection_id:
+                        raise RuntimeError(f"Provider {key[1]} ({key[0]}) exists without an id")
+                    put_json(config, cookie, f"/api/providers/{connection_id}", provider_update_payload(desired))
+                    print(f"updated provider: {key[1]} ({key[0]})")
+                else:
+                    print(f"provider exists: {key[1]} ({key[0]})")
                 continue
-            post_json(config, cookie, "/api/providers", provider_payload(provider))
+            post_json(config, cookie, "/api/providers", desired)
             print(f"created provider: {key[1]} ({key[0]})")
 
 
