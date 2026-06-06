@@ -42,4 +42,6 @@ providers:
 
 customProviderNodes: []
 
-aliases: []
+aliases:
+  - alias: local-coder
+    model: ollama-local/qwen2.5-coder:7b
