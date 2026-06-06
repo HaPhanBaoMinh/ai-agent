@@ -62,7 +62,7 @@ status:
 	kubectl -n $(NAMESPACE) get svc
 
 port-forward-9router:
-	kubectl -n $(NAMESPACE) port-forward svc/9router 20128:20128
+	kubectl -n $(NAMESPACE) port-forward svc/nine-router 20128:20128
 
 port-forward-qdrant:
 	kubectl -n $(NAMESPACE) port-forward svc/qdrant 6333:6333

@@ -70,7 +70,7 @@ Avoid `kubectl edit`, workload `kubectl patch`, and manual `helm upgrade --set` 
 
 ## Components
 
-- `9router`: service `9router`, port `20128`, persistent data at `/app/data`, local access through `kubectl -n ai-platform port-forward svc/9router 20128:20128`.
+- `9router`: service `nine-router`, port `20128`, persistent data at `/app/data`, local access through `kubectl -n ai-platform port-forward svc/nine-router 20128:20128`.
 - `qdrant`: service `qdrant`, HTTP port `6333`, optional gRPC `6334`, persistent data at `/qdrant/storage`.
 - `qdrant-mcp`: verify actual transport. Deploy in-cluster only if HTTP/SSE/Streamable HTTP is supported. If stdio-only, keep chart disabled by default and document local stdio config for Codex/Cursor.
 - `context-seeder`: seed `context/*.md` into Qdrant collection `project-context` idempotently with stable IDs and metadata.

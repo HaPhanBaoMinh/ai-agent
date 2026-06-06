@@ -6,6 +6,7 @@ image:
   pullPolicy: IfNotPresent
 
 service:
+  name: nine-router
   type: ClusterIP
   port: 20128
 
