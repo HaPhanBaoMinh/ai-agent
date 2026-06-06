@@ -88,7 +88,7 @@ make port-forward-qdrant
 | qdrant-mcp | Custom local Helm chart, disabled by default | No | N/A | N/A | N/A | Official MCP server supports stdio, SSE, and streamable HTTP; chart uses a local image build to avoid assuming a registry image. |
 | context-seeder | Custom local Helm chart, disabled by default | No | N/A | N/A | N/A | Project-specific idempotent seeding job. Local seeding is usually simpler for development. |
 | ollama | Custom local Helm chart | No | N/A | N/A | N/A | CPU-first single-node local model hosting in Minikube. |
-| ollama-models | Custom local Helm chart | No | N/A | N/A | N/A | Argo CD hook Job pulls default local models after Ollama is available. |
+| ollama-models | Custom local Helm chart | No | N/A | N/A | N/A | Argo CD managed Job pulls default local models after Ollama is available. |
 
 ## Secrets
 

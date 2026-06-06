@@ -2,12 +2,11 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "ollama-models.fullname" . }}
+  name: {{ include "ollama-models.fullname" . }}-{{ toJson .Values.models | sha256sum | trunc 8 }}
   labels:
     {{- include "ollama-models.labels" . | nindent 4 }}
   annotations:
-    argocd.argoproj.io/hook: PostSync
-    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+    argocd.argoproj.io/sync-wave: "30"
 spec:
   backoffLimit: {{ .Values.backoffLimit }}
   activeDeadlineSeconds: {{ .Values.activeDeadlineSeconds }}
