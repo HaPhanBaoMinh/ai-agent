@@ -12,7 +12,7 @@ Codex CLI / Cursor
     -> model providers
 ```
 
-Codex CLI and Cursor run locally. Kubernetes hosts only infrastructure that is useful to local agents: 9Router, Qdrant, optional Qdrant MCP, and optional context seeding.
+Codex CLI and Cursor run locally. Kubernetes hosts infrastructure useful to local agents: 9Router, Qdrant, optional Qdrant MCP, optional context seeding, and Ollama for local model serving.
 
 9Router routes model/provider traffic. It is not a semantic memory store.
 
@@ -25,3 +25,6 @@ The repository is Helm-first. Components live under `charts/` because chart valu
 Argo CD reconciles the desired state from Git. Manual cluster changes must not remain as drift.
 
 The only Kubernetes target is Minikube on `10.50.1.20`.
+
+
+Ollama runs local open-weight models inside Minikube with CPU-first defaults. 9Router remains the main gateway for local, free, and paid providers. Local Ollama can be used directly through `svc/ollama` or registered as a provider in 9Router when its config is managed.

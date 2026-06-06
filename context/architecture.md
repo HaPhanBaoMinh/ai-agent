@@ -19,3 +19,6 @@ Codex CLI and Cursor run locally on the host. Kubernetes hosts only router and c
 Qdrant stores vectorized project context. MCP exposes Qdrant-backed tools to local agents.
 
 Argo CD syncs the desired state from this repository into Minikube.
+
+
+Ollama hosts CPU-first local open-weight models in Kubernetes. The default local model set is qwen2.5-coder:7b, deepseek-r1:8b, and gemma3:4b. 9Router remains the primary gateway.

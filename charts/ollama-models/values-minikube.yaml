@@ -1,0 +1,24 @@
+enabled: true
+
+image:
+  repository: ollama/ollama
+  tag: latest
+  pullPolicy: IfNotPresent
+
+ollamaUrl: http://ollama.ai-platform.svc.cluster.local:11434
+
+models:
+  - qwen2.5-coder:7b
+  - deepseek-r1:8b
+  - gemma3:4b
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 512Mi
+  limits:
+    cpu: "2"
+    memory: 4Gi
+
+backoffLimit: 2
+activeDeadlineSeconds: 14400

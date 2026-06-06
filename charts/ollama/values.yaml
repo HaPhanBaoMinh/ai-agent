@@ -1,0 +1,35 @@
+replicaCount: 1
+
+image:
+  repository: ollama/ollama
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 11434
+
+persistence:
+  enabled: true
+  size: 80Gi
+  mountPath: /root/.ollama
+
+env:
+  OLLAMA_HOST: 0.0.0.0:11434
+  OLLAMA_NUM_PARALLEL: "1"
+  OLLAMA_MAX_LOADED_MODELS: "1"
+  OLLAMA_FLASH_ATTENTION: "false"
+
+resources:
+  requests:
+    cpu: "4"
+    memory: 16Gi
+  limits:
+    cpu: "12"
+    memory: 48Gi
+
+podSecurityContext: {}
+securityContext: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}

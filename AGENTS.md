@@ -67,3 +67,8 @@ Codex CLI / Cursor
 ```
 
 When implementing the GitOps repo, include charts, Argo CD App of Apps manifests, docs, context files, Makefile targets, validation commands, and test cases described in the source note.
+
+
+## Local model hosting
+
+Ollama is the default CPU-first local model runtime in this workspace. Keep Ollama and model pull changes GitOps-first under `charts/ollama`, `charts/ollama-models`, and `clusters/argo/applications`. Route through 9Router when possible; do not expose Ollama publicly.

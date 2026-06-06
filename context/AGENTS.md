@@ -30,3 +30,8 @@ Follow Helm-first:
 Never commit real secrets. Use placeholders, `existingSecret`, or documented local `kubectl create secret` commands.
 
 Do not fake MCP transport. If the selected MCP server only supports local stdio, document local stdio mode instead of creating an invalid Kubernetes service.
+
+
+## Local model hosting
+
+Ollama is the default CPU-first local model runtime in this workspace. Keep Ollama and model pull changes GitOps-first under `charts/ollama`, `charts/ollama-models`, and `clusters/argo/applications`. Route through 9Router when possible; do not expose Ollama publicly.

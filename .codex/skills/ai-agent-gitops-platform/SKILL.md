@@ -119,3 +119,8 @@ helm template context-seeder charts/context-seeder -f charts/context-seeder/valu
 ```
 
 Run cluster-changing validation only after the Minikube target is verified.
+
+
+## Local model hosting
+
+Ollama is the default CPU-first local model runtime in this workspace. Keep Ollama and model pull changes GitOps-first under `charts/ollama`, `charts/ollama-models`, and `clusters/argo/applications`. Route through 9Router when possible; do not expose Ollama publicly.

@@ -1,0 +1,44 @@
+{{- if .Values.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "ollama-models.fullname" . }}
+  labels:
+    {{- include "ollama-models.labels" . | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  backoffLimit: {{ .Values.backoffLimit }}
+  activeDeadlineSeconds: {{ .Values.activeDeadlineSeconds }}
+  template:
+    metadata:
+      labels:
+        {{- include "ollama-models.labels" . | nindent 8 }}
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: ollama-models
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: OLLAMA_HOST
+              value: {{ .Values.ollamaUrl | quote }}
+          command:
+            - /bin/sh
+            - -ec
+          args:
+            - |
+              echo "Waiting for Ollama at ${OLLAMA_HOST}"
+              until ollama list >/dev/null 2>&1; do
+                sleep 5
+              done
+              {{- range .Values.models }}
+              echo "Pulling {{ . }}"
+              ollama pull {{ . | quote }}
+              {{- end }}
+              echo "Installed models:"
+              ollama list
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+{{- end }}

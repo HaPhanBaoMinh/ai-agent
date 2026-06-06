@@ -73,3 +73,30 @@ If a manual cluster change is found:
 2. Commit or stage the repository change.
 3. Sync through Argo CD.
 4. Verify the live state matches Git.
+
+
+## Ollama Local Models
+
+Port-forward Ollama:
+
+```bash
+make port-forward-ollama
+```
+
+List local models:
+
+```bash
+make status-models
+```
+
+Pull an additional model:
+
+```bash
+MODEL=gemma3:12b make pull-local-model
+```
+
+Check model puller logs:
+
+```bash
+make logs-ollama-models
+```

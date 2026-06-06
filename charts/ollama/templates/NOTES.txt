@@ -1,0 +1,5 @@
+Ollama is available in-cluster at:
+  http://{{ include "ollama.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.service.port }}
+
+Local access:
+  kubectl -n {{ .Release.Namespace }} port-forward svc/{{ include "ollama.fullname" . }} 11434:{{ .Values.service.port }}

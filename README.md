@@ -14,7 +14,7 @@ Codex CLI / Cursor
     -> Kiro / OpenAI-compatible / Claude-compatible providers
 ```
 
-Codex CLI and Cursor run locally. The cluster hosts only router and context infrastructure.
+Codex CLI and Cursor run locally. The cluster hosts router, context, and local model-serving infrastructure.
 
 ## Cluster Scope
 
@@ -87,6 +87,8 @@ make port-forward-qdrant
 | 9router | Custom local Helm chart | No | N/A | N/A | N/A | Docker image and port/data layout are documented, but no reliable public Helm chart was found. |
 | qdrant-mcp | Custom local Helm chart, disabled by default | No | N/A | N/A | N/A | Official MCP server supports stdio, SSE, and streamable HTTP; chart uses a local image build to avoid assuming a registry image. |
 | context-seeder | Custom local Helm chart, disabled by default | No | N/A | N/A | N/A | Project-specific idempotent seeding job. Local seeding is usually simpler for development. |
+| ollama | Custom local Helm chart | No | N/A | N/A | N/A | CPU-first single-node local model hosting in Minikube. |
+| ollama-models | Custom local Helm chart | No | N/A | N/A | N/A | Argo CD hook Job pulls default local models after Ollama is available. |
 
 ## Secrets
 
@@ -107,15 +109,19 @@ helm template qdrant charts/qdrant -f charts/qdrant/values-minikube.yaml
 helm template 9router charts/9router -f charts/9router/values-minikube.yaml
 helm template qdrant-mcp charts/qdrant-mcp -f charts/qdrant-mcp/values-minikube.yaml
 helm template context-seeder charts/context-seeder -f charts/context-seeder/values-minikube.yaml
+helm template ollama charts/ollama -f charts/ollama/values-minikube.yaml
+helm template ollama-models charts/ollama-models -f charts/ollama-models/values-minikube.yaml
 helm lint charts/qdrant
 helm lint charts/9router
 helm lint charts/qdrant-mcp
 helm lint charts/context-seeder
+helm lint charts/ollama
+helm lint charts/ollama-models
 ```
 
 ## Local Image Builds
 
-Qdrant MCP and context-seeder charts are disabled by default. To run them in Minikube, build images into the Minikube Docker daemon and set `enabled: true` in their `values-minikube.yaml`.
+Qdrant MCP and context-seeder charts are disabled by default and use local images if enabled. Ollama uses the public `ollama/ollama` image and is enabled by default for CPU-first local model hosting.
 
 ```bash
 make build-qdrant-mcp-image
@@ -178,6 +184,48 @@ http://127.0.0.1:8000/sse
 - 9Router base URL: `http://127.0.0.1:20128/v1`
 - MCP SSE URL when running local SSE: `http://127.0.0.1:8000/sse`
 - Cursor rules should reference `AGENTS.md` and `context/*.md`.
+
+## Local Ollama Models
+
+This repository runs Ollama inside Minikube using CPU-first defaults. The Ollama service is internal only:
+
+```txt
+http://ollama.ai-platform.svc.cluster.local:11434
+```
+
+Local access:
+
+```bash
+make port-forward-ollama
+make test-ollama
+make status-models
+```
+
+Default pulled models:
+
+- `qwen2.5-coder:7b` for lightweight coding.
+- `deepseek-r1:8b` for local reasoning.
+- `gemma3:4b` for general and multilingual tasks.
+
+To pull another model manually after Ollama is running:
+
+```bash
+MODEL=gemma3:12b make pull-local-model
+```
+
+CPU-only inference is useful but slower than GPU. Keep larger 14B/32B models opt-in until Kubernetes exposes GPU resources.
+
+## Free And Existing Providers
+
+Recommended provider order for this local platform:
+
+- Local Ollama for private/offline and cheap tasks.
+- Gemini API free/paid key from Google AI Studio for Gemini models.
+- OpenRouter `:free` models for broad free-provider experiments.
+- Groq free plan for fast hosted open models within free quotas.
+- Kiro when you create its key/provider entry.
+
+ChatGPT Plus is useful in the ChatGPT app, but OpenAI API usage is billed separately and is not included in ChatGPT Plus.
 
 ## Seed Context
 

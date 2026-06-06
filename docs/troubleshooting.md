@@ -106,3 +106,30 @@ minikube status
 eval "$(minikube docker-env)"
 docker images
 ```
+
+
+## Ollama Pod Pending Or Slow
+
+Check CPU/memory scheduling and PVC capacity:
+
+```bash
+kubectl -n ai-platform get pod,statefulset,pvc -l app.kubernetes.io/name=ollama
+kubectl describe node minikube
+```
+
+CPU-only generation is expected to be slower than GPU. Reduce model size before increasing resource limits.
+
+## Ollama Model Pull Failed
+
+Check Job logs and network access:
+
+```bash
+make logs-ollama-models
+kubectl -n ai-platform get jobs
+```
+
+Pull one model manually after Ollama is ready:
+
+```bash
+MODEL=qwen2.5-coder:7b make pull-local-model
+```
