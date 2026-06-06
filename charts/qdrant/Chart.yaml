@@ -1,0 +1,10 @@
+apiVersion: v2
+name: qdrant-wrapper
+description: Local wrapper chart for the official Qdrant Helm chart.
+type: application
+version: 0.1.0
+appVersion: "1.17.1"
+dependencies:
+  - name: qdrant
+    version: 1.17.1
+    repository: https://qdrant.github.io/qdrant-helm

@@ -1,0 +1,4 @@
+Qdrant is managed by the official qdrant chart dependency.
+
+Local access:
+  kubectl -n ai-platform port-forward svc/qdrant 6333:6333

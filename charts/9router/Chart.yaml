@@ -1,0 +1,6 @@
+apiVersion: v2
+name: 9router
+description: Local Helm chart for 9Router on Minikube.
+type: application
+version: 0.1.0
+appVersion: "latest"

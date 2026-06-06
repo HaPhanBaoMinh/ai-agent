@@ -1,0 +1,32 @@
+replicaCount: 1
+
+image:
+  repository: decolua/9router
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 20128
+
+persistence:
+  enabled: true
+  size: 1Gi
+  mountPath: /app/data
+
+env:
+  DATA_DIR: /app/data
+  REQUIRE_API_KEY: "true"
+
+secret:
+  enabled: false
+  existingSecret: 9router-secret
+  apiKeyName: API_KEY
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi

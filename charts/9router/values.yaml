@@ -1,0 +1,41 @@
+replicaCount: 1
+
+image:
+  repository: decolua/9router
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 20128
+
+persistence:
+  enabled: true
+  size: 1Gi
+  mountPath: /app/data
+
+env:
+  DATA_DIR: /app/data
+
+secret:
+  enabled: false
+  existingSecret: ""
+  apiKeyName: API_KEY
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+podSecurityContext:
+  fsGroup: 1000
+
+securityContext:
+  allowPrivilegeEscalation: false
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

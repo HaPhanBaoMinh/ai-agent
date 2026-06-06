@@ -1,0 +1,21 @@
+enabled: false
+
+image:
+  repository: context-seeder
+  tag: local
+  pullPolicy: IfNotPresent
+
+qdrantUrl: http://qdrant.ai-platform.svc.cluster.local:6333
+collectionName: project-context
+embeddingModel: sentence-transformers/all-MiniLM-L6-v2
+vectorSize: 384
+distance: Cosine
+backoffLimit: 1
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 1Gi

@@ -1,0 +1,12 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+*.log
+charts/**/charts/
+charts/**/Chart.lock
+tmp/
+dist/
+node_modules/
+__pycache__/
+.venv/

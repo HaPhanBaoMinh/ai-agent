@@ -1,0 +1,17 @@
+enabled: false
+
+image:
+  repository: qdrant-mcp
+  tag: local
+  pullPolicy: IfNotPresent
+
+transport: sse
+
+service:
+  type: ClusterIP
+  port: 8000
+
+env:
+  QDRANT_URL: http://qdrant.ai-platform.svc.cluster.local:6333
+  COLLECTION_NAME: project-context
+  EMBEDDING_MODEL: sentence-transformers/all-MiniLM-L6-v2

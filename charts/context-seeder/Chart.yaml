@@ -1,0 +1,6 @@
+apiVersion: v2
+name: context-seeder
+description: Optional Job to seed project context into Qdrant.
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

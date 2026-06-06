@@ -1,0 +1,27 @@
+qdrant:
+  replicaCount: 1
+  image:
+    repository: qdrant/qdrant
+    tag: v1.17.1
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    ports:
+      - name: http
+        port: 6333
+        targetPort: 6333
+        protocol: TCP
+      - name: grpc
+        port: 6334
+        targetPort: 6334
+        protocol: TCP
+  persistence:
+    enabled: true
+    size: 5Gi
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi

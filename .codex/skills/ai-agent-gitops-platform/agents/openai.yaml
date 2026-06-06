@@ -1,0 +1,3 @@
+display_name: AI Agent GitOps Platform
+short_description: Guardrails for Helm-first GitOps on local Minikube.
+default_prompt: Use this skill when building or operating the local AI agent GitOps platform with 9Router, Qdrant, MCP, Argo CD, Helm, Codex CLI, and Cursor.
