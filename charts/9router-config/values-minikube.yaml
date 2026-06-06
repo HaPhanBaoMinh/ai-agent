@@ -1,0 +1,45 @@
+enabled: true
+
+routerUrl: http://nine-router.ai-platform.svc.cluster.local:20128
+
+auth:
+  existingSecret: ""
+  passwordKey: ADMIN_PASSWORD
+  allowDefaultPassword: true
+  defaultPassword: "123456"
+
+providerSecrets:
+  existingSecret: 9router-provider-secrets
+
+providers:
+  - name: Ollama Local
+    provider: ollama-local
+    enabled: true
+    priority: 1
+    defaultModel: qwen2.5-coder:7b
+    providerSpecificData:
+      baseUrl: http://ollama.ai-platform.svc.cluster.local:11434
+  - name: Gemini API
+    provider: gemini
+    enabled: false
+    apiKeyEnv: GEMINI_API_KEY
+    priority: 20
+  - name: OpenRouter
+    provider: openrouter
+    enabled: false
+    apiKeyEnv: OPENROUTER_API_KEY
+    priority: 30
+  - name: OpenAI API
+    provider: openai
+    enabled: false
+    apiKeyEnv: OPENAI_API_KEY
+    priority: 40
+  - name: Groq
+    provider: groq
+    enabled: false
+    apiKeyEnv: GROQ_API_KEY
+    priority: 50
+
+customProviderNodes: []
+
+aliases: []

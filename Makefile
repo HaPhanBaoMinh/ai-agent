@@ -5,7 +5,7 @@ ARGOCD_NAMESPACE ?= argocd
 TARGET_CONTEXT ?= minikube
 MODEL ?= qwen2.5-coder:7b
 
-.PHONY: minikube-start verify-cluster argocd-install argocd-port-forward helm-deps helm-lint helm-template deploy status port-forward-9router port-forward-qdrant port-forward-qdrant-mcp port-forward-ollama test-qdrant test-9router test-ollama status-models pull-local-model logs-9router logs-qdrant logs-ollama logs-ollama-models seed-context-local build-qdrant-mcp-image build-context-seeder-image clean
+.PHONY: minikube-start verify-cluster argocd-install argocd-port-forward helm-deps helm-lint helm-template deploy status port-forward-9router port-forward-qdrant port-forward-qdrant-mcp port-forward-ollama test-qdrant test-9router test-ollama status-models pull-local-model logs-9router logs-9router-config logs-qdrant logs-ollama logs-ollama-models seed-context-local build-qdrant-mcp-image build-context-seeder-image clean
 
 minikube-start:
 	minikube start
@@ -40,6 +40,7 @@ helm-deps:
 	helm dependency update charts/context-seeder || true
 	helm dependency update charts/ollama || true
 	helm dependency update charts/ollama-models || true
+	helm dependency update charts/9router-config || true
 
 helm-lint:
 	helm lint charts/qdrant
@@ -48,6 +49,7 @@ helm-lint:
 	helm lint charts/context-seeder
 	helm lint charts/ollama
 	helm lint charts/ollama-models
+	helm lint charts/9router-config
 
 helm-template:
 	helm template qdrant charts/qdrant -f charts/qdrant/values-minikube.yaml
@@ -56,6 +58,7 @@ helm-template:
 	helm template context-seeder charts/context-seeder -f charts/context-seeder/values-minikube.yaml
 	helm template ollama charts/ollama -f charts/ollama/values-minikube.yaml
 	helm template ollama-models charts/ollama-models -f charts/ollama-models/values-minikube.yaml
+	helm template 9router-config charts/9router-config -f charts/9router-config/values-minikube.yaml
 
 deploy: verify-cluster
 	kubectl apply -f clusters/argo/namespace.yaml
@@ -99,6 +102,9 @@ pull-local-model:
 
 logs-9router:
 	kubectl -n $(NAMESPACE) logs -l app.kubernetes.io/name=9router --tail=200
+
+logs-9router-config:
+	kubectl -n $(NAMESPACE) logs -l app.kubernetes.io/name=9router-config --tail=200
 
 logs-qdrant:
 	kubectl -n $(NAMESPACE) logs -l app.kubernetes.io/name=qdrant --tail=200

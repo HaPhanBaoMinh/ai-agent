@@ -89,6 +89,7 @@ make port-forward-qdrant
 | context-seeder | Custom local Helm chart, disabled by default | No | N/A | N/A | N/A | Project-specific idempotent seeding job. Local seeding is usually simpler for development. |
 | ollama | Custom local Helm chart | No | N/A | N/A | N/A | CPU-first single-node local model hosting in Minikube. |
 | ollama-models | Custom local Helm chart | No | N/A | N/A | N/A | Argo CD managed Job pulls default local models after Ollama is available. |
+| 9router-config | Custom local Helm chart | No | N/A | N/A | N/A | Argo CD managed Job seeds 9Router provider settings from Git without committing real API keys. |
 
 ## Secrets
 
@@ -101,6 +102,23 @@ kubectl -n ai-platform create secret generic 9router-secret \
   --from-literal=API_KEY='replace-me'
 ```
 
+Create optional provider API key secrets before enabling hosted providers in `charts/9router-config/values-minikube.yaml`:
+
+```bash
+kubectl -n ai-platform create secret generic 9router-provider-secrets \
+  --from-literal=GEMINI_API_KEY='replace-me' \
+  --from-literal=OPENROUTER_API_KEY='replace-me' \
+  --from-literal=OPENAI_API_KEY='replace-me' \
+  --from-literal=GROQ_API_KEY='replace-me'
+```
+
+If the 9Router dashboard password is changed from the local default, create the admin password secret and set `auth.existingSecret: 9router-config-secret` in `charts/9router-config/values-minikube.yaml`:
+
+```bash
+kubectl -n ai-platform create secret generic 9router-config-secret \
+  --from-literal=ADMIN_PASSWORD='replace-me'
+```
+
 ## Helm Commands
 
 ```bash
@@ -111,12 +129,14 @@ helm template qdrant-mcp charts/qdrant-mcp -f charts/qdrant-mcp/values-minikube.
 helm template context-seeder charts/context-seeder -f charts/context-seeder/values-minikube.yaml
 helm template ollama charts/ollama -f charts/ollama/values-minikube.yaml
 helm template ollama-models charts/ollama-models -f charts/ollama-models/values-minikube.yaml
+helm template 9router-config charts/9router-config -f charts/9router-config/values-minikube.yaml
 helm lint charts/qdrant
 helm lint charts/9router
 helm lint charts/qdrant-mcp
 helm lint charts/context-seeder
 helm lint charts/ollama
 helm lint charts/ollama-models
+helm lint charts/9router-config
 ```
 
 ## Local Image Builds
@@ -214,6 +234,20 @@ MODEL=gemma3:12b make pull-local-model
 ```
 
 CPU-only inference is useful but slower than GPU. Keep larger 14B/32B models opt-in until Kubernetes exposes GPU resources.
+
+## 9Router Config As Code
+
+`charts/9router-config` seeds 9Router through its management API. It is managed by the Argo CD app `9router-config`.
+
+Default Minikube config creates the `ollama-local` provider and points it at:
+
+```txt
+http://ollama.ai-platform.svc.cluster.local:11434
+```
+
+Hosted providers are defined but disabled by default. To enable Gemini/OpenRouter/OpenAI/Groq, create `9router-provider-secrets`, change the provider entry to `enabled: true`, commit, push, and let Argo CD sync. Do not configure providers manually in the UI unless the same desired state is added to Git.
+
+9Router stores UI changes in its PVC, so normal pod restarts do not erase UI settings. The GitOps seed Job prevents important provider config from depending on UI-only state.
 
 ## Free And Existing Providers
 

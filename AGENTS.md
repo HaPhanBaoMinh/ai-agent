@@ -22,6 +22,7 @@ Act as a senior DevOps/Platform Engineer for this repository when the work invol
 - MCP is the bridge that lets local agents access context/tools.
 - Never commit real secrets.
 - Do not expose services publicly; default to `ClusterIP` and use `kubectl port-forward` for local access.
+- Keep 9Router provider config GitOps-managed through `charts/9router-config` when possible. Do not depend on UI-only provider settings for durable config.
 
 ## Cluster safety
 
@@ -72,3 +73,7 @@ When implementing the GitOps repo, include charts, Argo CD App of Apps manifests
 ## Local model hosting
 
 Ollama is the default CPU-first local model runtime in this workspace. Keep Ollama and model pull changes GitOps-first under `charts/ollama`, `charts/ollama-models`, and `clusters/argo/applications`. Route through 9Router when possible; do not expose Ollama publicly.
+
+## 9Router config-as-code
+
+Use `charts/9router-config` to seed 9Router providers, custom provider nodes, and model aliases. Store API keys only in Kubernetes Secrets such as `9router-provider-secrets`; keep the Git values file limited to provider names, priorities, and non-secret endpoints. The default Minikube provider is `ollama-local` pointing to `http://ollama.ai-platform.svc.cluster.local:11434`.

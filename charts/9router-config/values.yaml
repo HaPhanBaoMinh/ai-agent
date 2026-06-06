@@ -1,0 +1,38 @@
+enabled: true
+
+image:
+  repository: python
+  tag: 3.12-slim
+  pullPolicy: IfNotPresent
+
+routerUrl: http://nine-router.ai-platform.svc.cluster.local:20128
+
+auth:
+  existingSecret: ""
+  passwordKey: ADMIN_PASSWORD
+  allowDefaultPassword: false
+  defaultPassword: "123456"
+
+providerSecrets:
+  existingSecret: ""
+
+providers: []
+customProviderNodes: []
+aliases: []
+
+backoffLimit: 2
+activeDeadlineSeconds: 300
+
+podAnnotations: {}
+
+resources:
+  requests:
+    cpu: 20m
+    memory: 64Mi
+  limits:
+    cpu: 250m
+    memory: 256Mi
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

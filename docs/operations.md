@@ -32,6 +32,7 @@ kubectl -n argocd get applications
 argocd app list
 argocd app sync qdrant
 argocd app sync 9router
+argocd app sync 9router-config
 ```
 
 ## Port Forward
@@ -47,6 +48,7 @@ make port-forward-qdrant-mcp
 ```bash
 make logs-qdrant
 make logs-9router
+make logs-9router-config
 kubectl -n ai-platform logs -l app.kubernetes.io/name=qdrant-mcp --tail=200
 ```
 
@@ -99,4 +101,17 @@ Check model puller logs:
 
 ```bash
 make logs-ollama-models
+```
+
+## 9Router Config As Code
+
+The `9router-config` Argo CD app runs a Kubernetes Job that logs in to 9Router and seeds configured providers, custom provider nodes, and aliases from `charts/9router-config/values-minikube.yaml`.
+
+Default Minikube behavior seeds only `ollama-local`. Hosted providers stay disabled until their API keys exist in the `9router-provider-secrets` Secret and the provider entry is enabled in Git.
+
+Check seed status:
+
+```bash
+kubectl -n ai-platform get jobs,pods -l app.kubernetes.io/name=9router-config
+make logs-9router-config
 ```

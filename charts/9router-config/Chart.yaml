@@ -1,0 +1,6 @@
+apiVersion: v2
+name: 9router-config
+description: GitOps seed job for 9Router providers, nodes, and model aliases
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

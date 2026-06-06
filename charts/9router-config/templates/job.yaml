@@ -1,0 +1,92 @@
+{{- if .Values.enabled }}
+{{- $configChecksum := toJson (dict "routerUrl" .Values.routerUrl "providers" .Values.providers "customProviderNodes" .Values.customProviderNodes "aliases" .Values.aliases) | sha256sum | trunc 8 -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "9router-config.fullname" . }}-{{ $configChecksum }}
+  labels:
+    {{- include "9router-config.labels" . | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "50"
+spec:
+  backoffLimit: {{ .Values.backoffLimit }}
+  activeDeadlineSeconds: {{ .Values.activeDeadlineSeconds }}
+  template:
+    metadata:
+      labels:
+        {{- include "9router-config.selectorLabels" . | nindent 8 }}
+      annotations:
+        checksum/config: {{ $configChecksum | quote }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: seed
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - python
+            - /config/seed_9router.py
+          env:
+            - name: ALLOW_DEFAULT_PASSWORD
+              value: {{ .Values.auth.allowDefaultPassword | quote }}
+            - name: DEFAULT_ADMIN_PASSWORD
+              value: {{ .Values.auth.defaultPassword | quote }}
+            {{- if .Values.auth.existingSecret }}
+            - name: ROUTER_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.auth.existingSecret | quote }}
+                  key: {{ .Values.auth.passwordKey | quote }}
+            {{- end }}
+            {{- if .Values.providerSecrets.existingSecret }}
+            - name: GEMINI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.providerSecrets.existingSecret | quote }}
+                  key: GEMINI_API_KEY
+                  optional: true
+            - name: OPENROUTER_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.providerSecrets.existingSecret | quote }}
+                  key: OPENROUTER_API_KEY
+                  optional: true
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.providerSecrets.existingSecret | quote }}
+                  key: OPENAI_API_KEY
+                  optional: true
+            - name: GROQ_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.providerSecrets.existingSecret | quote }}
+                  key: GROQ_API_KEY
+                  optional: true
+            {{- end }}
+          volumeMounts:
+            - name: config
+              mountPath: /config
+              readOnly: true
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "9router-config.fullname" . }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

@@ -1,0 +1,186 @@
+{{- if .Values.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "9router-config.fullname" . }}
+  labels:
+    {{- include "9router-config.labels" . | nindent 4 }}
+data:
+  config.json: |
+    {
+      "routerUrl": {{ .Values.routerUrl | quote }},
+      "providers": {{ .Values.providers | toJson }},
+      "customProviderNodes": {{ .Values.customProviderNodes | toJson }},
+      "aliases": {{ .Values.aliases | toJson }}
+    }
+  seed_9router.py: |
+    import json
+    import os
+    import sys
+    import urllib.error
+    import urllib.parse
+    import urllib.request
+
+
+    def load_config():
+        with open("/config/config.json", "r", encoding="utf-8") as handle:
+            return json.load(handle)
+
+
+    def request(method, url, payload=None, cookie=None):
+        data = None
+        headers = {"Content-Type": "application/json"}
+        if payload is not None:
+            data = json.dumps(payload).encode("utf-8")
+        if cookie:
+            headers["Cookie"] = cookie
+        req = urllib.request.Request(url, data=data, headers=headers, method=method)
+        try:
+            with urllib.request.urlopen(req, timeout=30) as response:
+                body = response.read().decode("utf-8")
+                return response.status, response.headers, json.loads(body) if body else {}
+        except urllib.error.HTTPError as exc:
+            body = exc.read().decode("utf-8")
+            try:
+                parsed = json.loads(body)
+            except json.JSONDecodeError:
+                parsed = {"raw": body}
+            return exc.code, exc.headers, parsed
+
+
+    def router_url(config, path):
+        base = config["routerUrl"].rstrip("/")
+        return f"{base}{path}"
+
+
+    def get_admin_password():
+        password = os.environ.get("ROUTER_ADMIN_PASSWORD")
+        if password:
+            return password
+        if os.environ.get("ALLOW_DEFAULT_PASSWORD", "false").lower() == "true":
+            return os.environ.get("DEFAULT_ADMIN_PASSWORD", "123456")
+        raise RuntimeError(
+            "ROUTER_ADMIN_PASSWORD is not set. Create the configured auth secret "
+            "or explicitly allow the 9Router default password for local development."
+        )
+
+
+    def login(config):
+        status, headers, body = request(
+            "POST",
+            router_url(config, "/api/auth/login"),
+            {"password": get_admin_password()},
+        )
+        if status != 200:
+            raise RuntimeError(f"9Router login failed with HTTP {status}: {body}")
+        cookie = headers.get("Set-Cookie", "").split(";")[0]
+        if not cookie:
+            raise RuntimeError("9Router login succeeded but did not return an auth cookie")
+        return cookie
+
+
+    def get_json(config, cookie, path, key):
+        status, _, body = request("GET", router_url(config, path), cookie=cookie)
+        if status != 200:
+            raise RuntimeError(f"GET {path} failed with HTTP {status}: {body}")
+        return body.get(key, body)
+
+
+    def post_json(config, cookie, path, payload):
+        status, _, body = request("POST", router_url(config, path), payload=payload, cookie=cookie)
+        if status not in (200, 201):
+            raise RuntimeError(f"POST {path} failed with HTTP {status}: {body}")
+        return body
+
+
+    def put_json(config, cookie, path, payload):
+        status, _, body = request("PUT", router_url(config, path), payload=payload, cookie=cookie)
+        if status not in (200, 201):
+            raise RuntimeError(f"PUT {path} failed with HTTP {status}: {body}")
+        return body
+
+
+    def is_enabled(item):
+        return bool(item.get("enabled", True))
+
+
+    def provider_key(item):
+        return (
+            item.get("provider"),
+            item.get("name") or item.get("displayName") or item.get("provider"),
+        )
+
+
+    def ensure_custom_nodes(config, cookie):
+        nodes = get_json(config, cookie, "/api/provider-nodes", "nodes")
+        existing = {(node.get("name"), node.get("prefix")) for node in nodes}
+        for node in config.get("customProviderNodes", []):
+            if not is_enabled(node):
+                continue
+            key = (node.get("name"), node.get("prefix"))
+            if key in existing:
+                print(f"custom node exists: {key[0]} ({key[1]})")
+                continue
+            payload = {k: v for k, v in node.items() if k != "enabled"}
+            post_json(config, cookie, "/api/provider-nodes", payload)
+            print(f"created custom node: {key[0]} ({key[1]})")
+
+
+    def provider_payload(item):
+        payload = {k: v for k, v in item.items() if k not in ("enabled", "apiKeyEnv", "optional")}
+        api_key_env = item.get("apiKeyEnv")
+        if api_key_env:
+            api_key = os.environ.get(api_key_env)
+            if not api_key and not item.get("optional", False):
+                raise RuntimeError(f"Provider {item.get('name') or item.get('provider')} requires env {api_key_env}")
+            payload["apiKey"] = api_key or ""
+        elif item.get("provider") == "ollama-local":
+            payload.setdefault("apiKey", "")
+        return payload
+
+
+    def ensure_providers(config, cookie):
+        connections = get_json(config, cookie, "/api/providers", "connections")
+        existing = {provider_key(connection) for connection in connections}
+        for provider in config.get("providers", []):
+            if not is_enabled(provider):
+                continue
+            key = provider_key(provider)
+            if key in existing:
+                print(f"provider exists: {key[1]} ({key[0]})")
+                continue
+            post_json(config, cookie, "/api/providers", provider_payload(provider))
+            print(f"created provider: {key[1]} ({key[0]})")
+
+
+    def ensure_aliases(config, cookie):
+        aliases = get_json(config, cookie, "/api/models/alias", "aliases")
+        existing = {item.get("alias"): item.get("model") for item in aliases}
+        for item in config.get("aliases", []):
+            if not is_enabled(item):
+                continue
+            alias = item["alias"]
+            model = item["model"]
+            if existing.get(alias) == model:
+                print(f"alias exists: {alias} -> {model}")
+                continue
+            put_json(config, cookie, "/api/models/alias", {"alias": alias, "model": model})
+            print(f"set alias: {alias} -> {model}")
+
+
+    def main():
+        config = load_config()
+        cookie = login(config)
+        ensure_custom_nodes(config, cookie)
+        ensure_providers(config, cookie)
+        ensure_aliases(config, cookie)
+        print("9Router config seed completed")
+
+
+    if __name__ == "__main__":
+        try:
+            main()
+        except Exception as exc:
+            print(f"ERROR: {exc}", file=sys.stderr)
+            sys.exit(1)
+{{- end }}

@@ -28,3 +28,5 @@ The only Kubernetes target is Minikube on `10.50.1.20`.
 
 
 Ollama runs local open-weight models inside Minikube with CPU-first defaults. 9Router remains the main gateway for local, free, and paid providers. Local Ollama can be used directly through `svc/ollama` or registered as a provider in 9Router when its config is managed.
+
+`charts/9router-config` is the GitOps-owned 9Router configuration layer. It seeds durable provider settings through the 9Router management API while keeping actual API keys in Kubernetes Secrets.
