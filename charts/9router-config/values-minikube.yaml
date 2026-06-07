@@ -18,7 +18,7 @@ providers:
     priority: 1
     defaultModel: qwen2.5-coder:7b
     providerSpecificData:
-      baseUrl: http://ollama-qwen-coder.ai-platform.svc.cluster.local:11434
+      baseUrl: http://ollama-qwen-coder.ai-platform.svc.cluster.local.:11434
   - name: Gemini API
     provider: gemini
     enabled: false

@@ -24,7 +24,7 @@ The repository is Helm-first. Components live under `charts/` because chart valu
 
 Argo CD reconciles the desired state from Git. Manual cluster changes must not remain as drift.
 
-The only Kubernetes target is Minikube on `10.50.1.20`.
+The only Kubernetes target is Minikube on `10.50.5.20`.
 
 
 Ollama runs local open-weight models inside Minikube with CPU-first defaults and one instance per model. `ollama-qwen-coder` is active; `ollama-deepseek-r1` and `ollama-gemma3` are defined but scaled to zero. 9Router remains the main gateway for local, free, and paid providers.

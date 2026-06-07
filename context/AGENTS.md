@@ -38,7 +38,7 @@ Ollama is the default CPU-first local model runtime in this workspace. Keep Olla
 
 ## 9Router config-as-code
 
-Use `charts/9router-config` to seed 9Router providers, custom provider nodes, and model aliases. Store API keys only in Kubernetes Secrets such as `9router-provider-secrets`; keep Git values limited to provider names, priorities, aliases, and non-secret endpoints. The default Minikube provider is `ollama-local` pointing to `http://ollama-qwen-coder.ai-platform.svc.cluster.local:11434`.
+Use `charts/9router-config` to seed 9Router providers, custom provider nodes, and model aliases. Store API keys only in Kubernetes Secrets such as `9router-provider-secrets`; keep Git values limited to provider names, priorities, aliases, and non-secret endpoints. The default Minikube provider is `ollama-local` pointing to `http://ollama-qwen-coder.ai-platform.svc.cluster.local.:11434`.
 
 ## Model-scoped Ollama instances
 

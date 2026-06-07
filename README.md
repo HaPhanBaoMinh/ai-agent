@@ -238,7 +238,7 @@ http://127.0.0.1:8000/sse
 This repository runs model-scoped Ollama instances inside Minikube using CPU-first defaults. The active service is internal only:
 
 ```txt
-http://ollama-qwen-coder.ai-platform.svc.cluster.local:11434
+http://ollama-qwen-coder.ai-platform.svc.cluster.local.:11434
 ```
 
 Local access to the active instance:
@@ -274,7 +274,7 @@ CPU-only inference is useful but slower than GPU. Keep larger 14B/32B models opt
 Default Minikube config creates the `ollama-local` provider and points it at:
 
 ```txt
-http://ollama-qwen-coder.ai-platform.svc.cluster.local:11434
+http://ollama-qwen-coder.ai-platform.svc.cluster.local.:11434
 ```
 
 Hosted providers are defined but disabled by default. To enable Gemini/OpenRouter/OpenAI/Groq, create `9router-provider-secrets`, change the provider entry to `enabled: true`, commit, push, and let Argo CD sync. Do not configure providers manually in the UI unless the same desired state is added to Git.

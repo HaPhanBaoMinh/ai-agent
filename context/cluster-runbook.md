@@ -45,7 +45,7 @@ The old PVC `data-ollama-0` was deleted after moving to model-scoped Ollama. The
 9Router local provider is `ollama-local` and points to:
 
 ```txt
-http://ollama-qwen-coder.ai-platform.svc.cluster.local:11434
+http://ollama-qwen-coder.ai-platform.svc.cluster.local.:11434
 ```
 
 The active Codex-compatible route is:

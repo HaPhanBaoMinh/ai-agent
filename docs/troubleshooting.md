@@ -2,9 +2,9 @@
 
 ## Wrong Kube Context
 
-Run `make verify-cluster`. Stop if the current context or node list does not identify Minikube on `10.50.1.20`.
+Run `make verify-cluster`. Stop if the current context or node list does not identify Minikube on `10.50.5.20`.
 
-## Node IP Is Not 10.50.1.20
+## Node IP Is Not 10.50.5.20
 
 Do not deploy. Confirm whether Minikube is running on the intended host before any write command.
 
@@ -53,9 +53,23 @@ Check pod readiness and port-forward:
 
 ```bash
 kubectl -n ai-platform get pods -l app.kubernetes.io/name=9router
-kubectl -n ai-platform get svc 9router
+kubectl -n ai-platform get svc nine-router
 make port-forward-9router
 ```
+
+## 9Router Ollama DNS Resolution Failed
+
+`EAI_AGAIN getaddrinfo ollama-qwen-coder...` means 9Router cannot resolve the Ollama service FQDN. Confirm the namespaces, services, and DNS first:
+
+```bash
+kubectl -n ai-platform get pods,svc -l app.kubernetes.io/name=ollama
+kubectl -n ai-platform get svc ollama-qwen-coder
+kubectl -n ai-platform get pods -l app.kubernetes.io/name=9router -o wide
+kubectl -n ai-platform logs -l app.kubernetes.io/name=9router --tail=200
+kubectl -n ai-platform exec deploy/9router -- nslookup ollama-qwen-coder.ai-platform.svc.cluster.local.
+```
+
+If CoreDNS is healthy but 9Router still cannot resolve the in-cluster service, verify the `ai-platform` namespace is trusting the cluster CA and the 9Router pod DNS policy is compatible with Minikube. If the fix is cluster-level, document the exact change in Git afterward.
 
 ## 9Router Auth Failed
 
