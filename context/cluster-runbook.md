@@ -31,7 +31,7 @@ ssh 10.50.5.20 "kubectl -n ai-platform get pods,svc,pvc"
 
 Qdrant service: `qdrant` on port `6333`.
 
-Active Ollama service: `ollama-gemma3` on port `11434`.
+Active Ollama service: `ollama-qwen-coder` on port `11434`.
 
 Defined but scaled down Ollama services:
 
@@ -39,26 +39,26 @@ Defined but scaled down Ollama services:
 - `ollama-deepseek-r1`
 - `ollama-gemma3`
 
-The old PVC `data-ollama-0` was deleted after moving to model-scoped Ollama. The active model PVC is `data-ollama-gemma3-0`.
+The old PVC `data-ollama-0` was deleted after moving to model-scoped Ollama. The active model PVC is `data-ollama-qwen-coder-0`.
 
 ## 9Router Model Routing
 
 9Router local provider is `ollama-local` and points to:
 
 ```txt
-http://ollama-gemma3.ai-platform.svc.cluster.local.:11434
+http://ollama-qwen-coder.ai-platform.svc.cluster.local.:11434
 ```
 
 The active Codex-compatible route is:
 
 ```txt
-ollama-local/gemma3:4b
+ollama-local/qwen2.5-coder:3b
 ```
 
 The 9Router alias `local-coder` maps to:
 
 ```txt
-ollama-local/gemma3:4b
+ollama-local/qwen2.5-coder:3b
 ```
 
 `local-coder` works for OpenAI-compatible Chat Completions clients. Codex CLI currently works more reliably with the full model route because Codex uses the Responses API path.
@@ -97,9 +97,9 @@ The model host `10.50.5.20` is an ASUS desktop with AMD Ryzen 7 5700G, 16 logica
 
 Detected GPU: integrated AMD/ATI Cezanne Radeon Vega iGPU. No NVIDIA driver was found (`nvidia-smi` is unavailable), and Kubernetes does not advertise GPU resources.
 
-Ollama reports `gemma3:4b` is running with `PROCESSOR 100% CPU`. Local model latency is expected to be high for Codex because Codex injects large prompts and the model is CPU-only.
+Ollama reports `qwen2.5-coder:3b` is running with `PROCESSOR 100% CPU`. Local model latency is expected to be high for Codex because Codex injects large prompts and the model is CPU-only.
 
-For faster local Codex responses, prefer the active smaller model instance `gemma3:4b` or add a supported discrete GPU and expose it to Kubernetes.
+For faster local Codex responses, prefer the active smaller model instance `qwen2.5-coder:3b` or add a supported discrete GPU and expose it to Kubernetes.
 
 ## Shared Context Policy
 

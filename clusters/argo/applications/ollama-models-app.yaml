@@ -12,9 +12,9 @@ spec:
     targetRevision: main
     path: charts/ollama-models
     helm:
-      releaseName: ollama-models-gemma3
+      releaseName: ollama-models-qwen-coder
       valueFiles:
-        - values-gemma3.yaml
+        - values-qwen-coder.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: ai-platform

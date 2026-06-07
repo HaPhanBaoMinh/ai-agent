@@ -8,7 +8,7 @@ image:
 ollamaUrl: http://ollama-qwen-coder.ai-platform.svc.cluster.local:11434
 
 models:
-  - qwen2.5-coder:7b
+  - qwen2.5-coder:3b
 
 resources:
   requests:

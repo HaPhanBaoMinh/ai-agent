@@ -59,14 +59,14 @@ make port-forward-9router
 
 ## 9Router Ollama DNS Resolution Failed
 
-`EAI_AGAIN getaddrinfo ollama-gemma3...` means 9Router cannot resolve the Ollama service FQDN. Confirm the namespaces, services, and DNS first:
+`EAI_AGAIN getaddrinfo ollama-qwen-coder...` means 9Router cannot resolve the Ollama service FQDN. Confirm the namespaces, services, and DNS first:
 
 ```bash
 kubectl -n ai-platform get pods,svc -l app.kubernetes.io/name=ollama
-kubectl -n ai-platform get svc ollama-gemma3
+kubectl -n ai-platform get svc ollama-qwen-coder
 kubectl -n ai-platform get pods -l app.kubernetes.io/name=9router -o wide
 kubectl -n ai-platform logs -l app.kubernetes.io/name=9router --tail=200
-kubectl -n ai-platform exec deploy/9router -- nslookup ollama-gemma3.ai-platform.svc.cluster.local.
+kubectl -n ai-platform exec deploy/9router -- nslookup ollama-qwen-coder.ai-platform.svc.cluster.local.
 ```
 
 If CoreDNS is healthy but 9Router still cannot resolve the in-cluster service, verify the `ai-platform` namespace is trusting the cluster CA and the 9Router pod DNS policy is compatible with Minikube. If the fix is cluster-level, document the exact change in Git afterward.
@@ -145,5 +145,5 @@ kubectl -n ai-platform get jobs
 Pull one model manually after Ollama is ready:
 
 ```bash
-MODEL=gemma3:4b make pull-local-model
+MODEL=qwen2.5-coder:3b make pull-local-model
 ```

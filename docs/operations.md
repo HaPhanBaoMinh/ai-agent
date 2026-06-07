@@ -79,7 +79,7 @@ If a manual cluster change is found:
 
 ## Ollama Local Models
 
-The active local instance is `ollama-gemma3` with `gemma3:4b`. `ollama-qwen-coder` and `ollama-deepseek-r1` are defined but scaled to zero.
+The active local instance is `ollama-qwen-coder` with `qwen2.5-coder:3b`. `ollama-deepseek-r1` and `ollama-gemma3` are defined but scaled to zero.
 
 Port-forward the active Ollama:
 

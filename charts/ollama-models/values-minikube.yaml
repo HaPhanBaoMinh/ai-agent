@@ -5,10 +5,10 @@ image:
   tag: latest
   pullPolicy: IfNotPresent
 
-ollamaUrl: http://ollama-gemma3.ai-platform.svc.cluster.local:11434
+ollamaUrl: http://ollama-qwen-coder.ai-platform.svc.cluster.local:11434
 
 models:
-  - gemma3:4b
+  - qwen2.5-coder:3b
 
 resources:
   requests:

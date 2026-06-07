@@ -3,7 +3,7 @@ SHELL := /bin/bash
 NAMESPACE ?= ai-platform
 ARGOCD_NAMESPACE ?= argocd
 TARGET_CONTEXT ?= minikube
-MODEL ?= gemma3:4b
+MODEL ?= qwen2.5-coder:3b
 
 .PHONY: minikube-start verify-cluster argocd-install argocd-port-forward helm-deps helm-lint helm-template deploy status port-forward-9router port-forward-qdrant port-forward-qdrant-mcp port-forward-ollama test-qdrant test-9router test-ollama status-models pull-local-model logs-9router logs-9router-config logs-qdrant logs-ollama logs-ollama-models seed-context-local build-qdrant-mcp-image build-context-seeder-image setup-codex-profiles tunnel-agent-platform clean
 
@@ -59,7 +59,7 @@ helm-template:
 	helm template ollama-qwen-coder charts/ollama -f charts/ollama/values-qwen-coder.yaml
 	helm template ollama-deepseek-r1 charts/ollama -f charts/ollama/values-deepseek-r1.yaml
 	helm template ollama-gemma3 charts/ollama -f charts/ollama/values-gemma3.yaml
-	helm template ollama-models-gemma3 charts/ollama-models -f charts/ollama-models/values-gemma3.yaml
+	helm template ollama-models-qwen-coder charts/ollama-models -f charts/ollama-models/values-qwen-coder.yaml
 	helm template 9router-config charts/9router-config -f charts/9router-config/values-minikube.yaml
 
 deploy: verify-cluster
@@ -82,7 +82,7 @@ port-forward-qdrant-mcp:
 	kubectl -n $(NAMESPACE) port-forward svc/qdrant-mcp 8000:8000
 
 port-forward-ollama:
-	kubectl -n $(NAMESPACE) port-forward svc/ollama-gemma3 11434:11434
+	kubectl -n $(NAMESPACE) port-forward svc/ollama-qwen-coder 11434:11434
 
 test-qdrant:
 	curl -sS http://127.0.0.1:6333
@@ -94,14 +94,14 @@ test-9router:
 
 test-ollama:
 	curl -sS http://127.0.0.1:11434/api/tags
-	curl -sS http://127.0.0.1:11434/api/generate -d '{"model":"gemma3:4b","prompt":"write hello world in Go","stream":false}'
+	curl -sS http://127.0.0.1:11434/api/generate -d '{"model":"qwen2.5-coder:3b","prompt":"write hello world in Go","stream":false}'
 
 status-models:
 	kubectl -n $(NAMESPACE) get statefulset -l app.kubernetes.io/name=ollama
-	kubectl -n $(NAMESPACE) exec statefulset/ollama-gemma3 -- ollama list
+	kubectl -n $(NAMESPACE) exec statefulset/ollama-qwen-coder -- ollama list
 
 pull-local-model:
-	kubectl -n $(NAMESPACE) exec statefulset/ollama-gemma3 -- ollama pull $(MODEL)
+	kubectl -n $(NAMESPACE) exec statefulset/ollama-qwen-coder -- ollama pull $(MODEL)
 
 logs-9router:
 	kubectl -n $(NAMESPACE) logs -l app.kubernetes.io/name=9router --tail=200
@@ -113,7 +113,7 @@ logs-qdrant:
 	kubectl -n $(NAMESPACE) logs -l app.kubernetes.io/name=qdrant --tail=200
 
 logs-ollama:
-	kubectl -n $(NAMESPACE) logs statefulset/ollama-gemma3 --tail=200
+	kubectl -n $(NAMESPACE) logs statefulset/ollama-qwen-coder --tail=200
 
 logs-ollama-models:
 	kubectl -n $(NAMESPACE) logs -l app.kubernetes.io/name=ollama-models --tail=200

@@ -21,4 +21,4 @@ Qdrant stores vectorized project context. MCP exposes Qdrant-backed tools to loc
 Argo CD syncs the desired state from this repository into Minikube.
 
 
-Ollama hosts CPU-first local open-weight models in Kubernetes. The active model-scoped instance is `ollama-gemma3` with `gemma3:4b`; `ollama-qwen-coder` and `ollama-deepseek-r1` are defined but scaled to zero. 9Router remains the primary gateway.
+Ollama hosts CPU-first local open-weight models in Kubernetes. The active model-scoped instance is `ollama-qwen-coder` with `qwen2.5-coder:3b`; `ollama-deepseek-r1` and `ollama-gemma3` are defined but scaled to zero. 9Router remains the primary gateway.

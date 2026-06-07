@@ -8,7 +8,7 @@ QDRANT_URL="${QDRANT_URL:-http://127.0.0.1:6333}"
 QDRANT_COLLECTION="${QDRANT_COLLECTION:-project-context}"
 QDRANT_EMBEDDING_MODEL="${QDRANT_EMBEDDING_MODEL:-sentence-transformers/all-MiniLM-L6-v2}"
 CHATGPT_MODEL="${CHATGPT_MODEL:-gpt-5.5}"
-NINE_ROUTER_MODEL="${NINE_ROUTER_MODEL:-ollama-local/gemma3:4b}"
+NINE_ROUTER_MODEL="${NINE_ROUTER_MODEL:-ollama-local/qwen2.5-coder:3b}"
 
 mkdir -p "$CODEX_HOME"
 
