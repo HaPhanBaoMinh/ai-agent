@@ -26,9 +26,10 @@ providers:
     priority: 20
   - name: OpenRouter
     provider: openrouter
-    enabled: false
+    enabled: true
     apiKeyEnv: OPENROUTER_API_KEY
     priority: 30
+    defaultModel: free
   - name: OpenAI API
     provider: openai
     enabled: false
@@ -45,3 +46,5 @@ customProviderNodes: []
 aliases:
   - alias: local-coder
     model: ollama-local/qwen2.5-coder:3b
+  - alias: openrouter-free
+    model: openrouter/free

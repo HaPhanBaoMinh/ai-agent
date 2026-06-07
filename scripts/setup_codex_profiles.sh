@@ -55,6 +55,19 @@ base_url = "$NINE_ROUTER_BASE_URL"
 wire_api = "responses"
 EOF
 
+cat > "$CODEX_HOME/openrouter-free.config.toml" <<EOF
+model = "openrouter/free"
+model_provider = "nine_router"
+model_context_window = 200000
+model_auto_compact_token_limit = 150000
+model_supports_reasoning_summaries = true
+
+[model_providers.nine_router]
+name = "9Router"
+base_url = "$NINE_ROUTER_BASE_URL"
+wire_api = "responses"
+EOF
+
 CONFIG_FILE="$CODEX_HOME/config.toml"
 touch "$CONFIG_FILE"
 
@@ -79,6 +92,7 @@ Codex profiles configured in $CODEX_HOME:
 
   codex --profile chatgpt
   codex --profile nine-router
+  codex --profile openrouter-free
 
 For nine-router and qdrant_context MCP, expose remote services from the model host first:
 

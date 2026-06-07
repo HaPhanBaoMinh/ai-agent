@@ -277,7 +277,7 @@ Default Minikube config creates the `ollama-local` provider and points it at:
 http://ollama-qwen-coder.ai-platform.svc.cluster.local.:11434
 ```
 
-Hosted providers are defined but disabled by default. To enable Gemini/OpenRouter/OpenAI/Groq, create `9router-provider-secrets`, change the provider entry to `enabled: true`, commit, push, and let Argo CD sync. Do not configure providers manually in the UI unless the same desired state is added to Git.
+Hosted providers are defined but disabled by default. To enable Gemini/OpenRouter/OpenAI/Groq, create `9router-provider-secrets`, change the provider entry to `enabled: true`, commit, push, and let Argo CD sync. OpenRouter free routing uses `openrouter/free`. Do not configure providers manually in the UI unless the same desired state is added to Git.
 
 9Router stores UI changes in its PVC, so normal pod restarts do not erase UI settings. The GitOps seed Job prevents important provider config from depending on UI-only state.
 
@@ -287,7 +287,7 @@ Recommended provider order for this local platform:
 
 - Local Ollama for private/offline and cheap tasks.
 - Gemini API free/paid key from Google AI Studio for Gemini models.
-- OpenRouter `:free` models for broad free-provider experiments.
+- OpenRouter `openrouter/free` for broad free-provider experiments.
 - Groq free plan for fast hosted open models within free quotas.
 - Kiro when you create its key/provider entry.
 
