@@ -8,7 +8,7 @@ QDRANT_URL="${QDRANT_URL:-http://127.0.0.1:6333}"
 QDRANT_COLLECTION="${QDRANT_COLLECTION:-project-context}"
 QDRANT_EMBEDDING_MODEL="${QDRANT_EMBEDDING_MODEL:-sentence-transformers/all-MiniLM-L6-v2}"
 CHATGPT_MODEL="${CHATGPT_MODEL:-gpt-5.5}"
-NINE_ROUTER_MODEL="${NINE_ROUTER_MODEL:-ollama-local/qwen2.5-coder:7b}"
+NINE_ROUTER_MODEL="${NINE_ROUTER_MODEL:-ollama-local/gemma3:4b}"
 
 mkdir -p "$CODEX_HOME"
 
@@ -40,6 +40,14 @@ model_provider = "nine_router"
 model_context_window = 4096
 model_auto_compact_token_limit = 3000
 model_supports_reasoning_summaries = false
+
+developer_instructions = """
+You are in nine-router mode for the ai-agent GitOps workspace.
+When the user asks about project facts, cluster facts, service endpoints, or shared memory, you must call qdrant_context to retrieve the relevant context before answering.
+Do not answer from memory when the needed project fact is not already present in the prompt.
+If retrieval is unavailable or returns no relevant context, say the context was not found rather than guessing.
+Use the shared context files and Qdrant-backed MCP memory as the source of truth for workspace facts.
+"""
 
 [model_providers.nine_router]
 name = "9Router"

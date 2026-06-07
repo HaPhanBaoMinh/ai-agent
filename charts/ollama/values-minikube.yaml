@@ -1,5 +1,5 @@
 replicaCount: 1
-fullnameOverride: ollama-qwen-coder
+fullnameOverride: ollama-gemma3
 
 image:
   repository: ollama/ollama

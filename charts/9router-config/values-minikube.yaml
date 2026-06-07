@@ -16,9 +16,9 @@ providers:
     provider: ollama-local
     enabled: true
     priority: 1
-    defaultModel: qwen2.5-coder:7b
+    defaultModel: gemma3:4b
     providerSpecificData:
-      baseUrl: http://ollama-qwen-coder.ai-platform.svc.cluster.local.:11434
+      baseUrl: http://ollama-gemma3.ai-platform.svc.cluster.local.:11434
   - name: Gemini API
     provider: gemini
     enabled: false
@@ -44,4 +44,4 @@ customProviderNodes: []
 
 aliases:
   - alias: local-coder
-    model: ollama-local/qwen2.5-coder:7b
+    model: ollama-local/gemma3:4b

@@ -27,6 +27,6 @@ Argo CD reconciles the desired state from Git. Manual cluster changes must not r
 The only Kubernetes target is Minikube on `10.50.5.20`.
 
 
-Ollama runs local open-weight models inside Minikube with CPU-first defaults and one instance per model. `ollama-qwen-coder` is active; `ollama-deepseek-r1` and `ollama-gemma3` are defined but scaled to zero. 9Router remains the main gateway for local, free, and paid providers.
+Ollama runs local open-weight models inside Minikube with CPU-first defaults and one instance per model. `ollama-gemma3` is active; `ollama-qwen-coder` and `ollama-deepseek-r1` are defined but scaled to zero. 9Router remains the main gateway for local, free, and paid providers.
 
 `charts/9router-config` is the GitOps-owned 9Router configuration layer. It seeds durable provider settings through the 9Router management API while keeping actual API keys in Kubernetes Secrets.

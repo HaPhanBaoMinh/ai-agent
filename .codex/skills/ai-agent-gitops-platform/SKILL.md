@@ -127,14 +127,14 @@ Ollama is the default CPU-first local model runtime in this workspace. Keep Olla
 
 ## 9Router config-as-code
 
-Use `charts/9router-config` to seed 9Router providers, custom provider nodes, and model aliases. Store API keys only in Kubernetes Secrets such as `9router-provider-secrets`; keep Git values limited to provider names, priorities, aliases, and non-secret endpoints. The default Minikube provider is `ollama-local` pointing to `http://ollama-qwen-coder.ai-platform.svc.cluster.local:11434`.
+Use `charts/9router-config` to seed 9Router providers, custom provider nodes, and model aliases. Store API keys only in Kubernetes Secrets such as `9router-provider-secrets`; keep Git values limited to provider names, priorities, aliases, and non-secret endpoints. The default Minikube provider is `ollama-local` pointing to `http://ollama-gemma3.ai-platform.svc.cluster.local.:11434`.
 
 ## Model-scoped Ollama instances
 
-Ollama is organized as one instance per local model. The active CPU-only instance is `ollama-qwen-coder` running `qwen2.5-coder:7b`; `ollama-deepseek-r1` and `ollama-gemma3` are GitOps-defined but scaled to zero by default. Keep 9Router local provider config pointed at the active service unless another model is explicitly scaled up and registered.
+Ollama is organized as one instance per local model. The active CPU-only instance is `ollama-gemma3` running `gemma3:4b`; `ollama-qwen-coder` and `ollama-deepseek-r1` are GitOps-defined but scaled to zero by default. Keep 9Router local provider config pointed at the active service unless another model is explicitly scaled up and registered.
 
 ## Durable context updates
 
 When a new durable fact, decision, operational rule, service endpoint, model layout, troubleshooting result, or user preference is discovered, update the appropriate repo context file before ending the task. Do not leave durable knowledge only in chat history. After updating context files, reseed Qdrant collection `project-context` so Codex, Cursor, and local agents can retrieve the same knowledge through MCP.
 
-Use the `qdrant_context` MCP server to retrieve shared project context before making cluster, GitOps, 9Router, Ollama, Qdrant, MCP, or Codex/Cursor integration decisions when the needed context is not already present in the current prompt.
+Use the `qdrant_context` MCP server to retrieve shared project context before making cluster, GitOps, 9Router, Ollama, Qdrant, MCP, or Codex/Cursor integration decisions when the needed context is not already present in the current prompt. In `nine-router` mode, prefer `qdrant_context` retrieval before answering and do not guess when the needed project context is missing.

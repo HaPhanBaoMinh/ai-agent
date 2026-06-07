@@ -79,7 +79,7 @@ If a manual cluster change is found:
 
 ## Ollama Local Models
 
-The active local instance is `ollama-qwen-coder` with `qwen2.5-coder:7b`. `ollama-deepseek-r1` and `ollama-gemma3` are defined but scaled to zero.
+The active local instance is `ollama-gemma3` with `gemma3:4b`. `ollama-qwen-coder` and `ollama-deepseek-r1` are defined but scaled to zero.
 
 Port-forward the active Ollama:
 
@@ -127,7 +127,7 @@ make port-forward-qdrant
 make seed-context-local
 ```
 
-Codex and Cursor should use the same Qdrant MCP collection, `project-context`, so context is shared across tools and models.
+Codex and Cursor should use the same Qdrant MCP collection, `project-context`, so context is shared across tools and models. For `codex --profile nine-router`, require `qdrant_context` retrieval before answering and avoid guessing when the needed context is not already in the prompt.
 
 ## Codex Profile Setup
 
@@ -137,7 +137,7 @@ After logging in with Codex on a new machine, run:
 make setup-codex-profiles
 ```
 
-This creates user-level profiles:
+This creates user-level profiles and also writes stricter nine-router developer instructions that prefer `qdrant_context` retrieval before answering:
 
 ```bash
 codex --profile chatgpt

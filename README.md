@@ -238,7 +238,7 @@ http://127.0.0.1:8000/sse
 This repository runs model-scoped Ollama instances inside Minikube using CPU-first defaults. The active service is internal only:
 
 ```txt
-http://ollama-qwen-coder.ai-platform.svc.cluster.local.:11434
+http://ollama-gemma3.ai-platform.svc.cluster.local.:11434
 ```
 
 Local access to the active instance:
@@ -253,16 +253,16 @@ Configured local model instances:
 
 | Instance | Model | Replicas | Service |
 |---|---|---:|---|
-| `ollama-qwen-coder` | `qwen2.5-coder:7b` | 1 | `ollama-qwen-coder:11434` |
+| `ollama-qwen-coder` | `qwen2.5-coder:7b` | 0 | `ollama-qwen-coder:11434` |
 | `ollama-deepseek-r1` | `deepseek-r1:8b` | 0 | `ollama-deepseek-r1:11434` |
-| `ollama-gemma3` | `gemma3:4b` | 0 | `ollama-gemma3:11434` |
+| `ollama-gemma3` | `gemma3:4b` | 1 | `ollama-gemma3:11434` |
 
-Only `qwen2.5-coder:7b` is pulled by default. Scale another model by changing its `replicaCount` in the matching `charts/ollama/values-*.yaml`, adding or enabling a matching `ollama-models` value/app, committing, pushing, and letting Argo CD sync.
+Only `gemma3:4b` is pulled by default. Scale another model by changing its `replicaCount` in the matching `charts/ollama/values-*.yaml`, adding or enabling a matching `ollama-models` value/app, committing, pushing, and letting Argo CD sync.
 
 To pull another model manually after Ollama is running:
 
 ```bash
-MODEL=gemma3:12b make pull-local-model
+MODEL=gemma3:4b make pull-local-model
 ```
 
 CPU-only inference is useful but slower than GPU. Keep larger 14B/32B models opt-in until Kubernetes exposes GPU resources.
@@ -274,7 +274,7 @@ CPU-only inference is useful but slower than GPU. Keep larger 14B/32B models opt
 Default Minikube config creates the `ollama-local` provider and points it at:
 
 ```txt
-http://ollama-qwen-coder.ai-platform.svc.cluster.local.:11434
+http://ollama-gemma3.ai-platform.svc.cluster.local.:11434
 ```
 
 Hosted providers are defined but disabled by default. To enable Gemini/OpenRouter/OpenAI/Groq, create `9router-provider-secrets`, change the provider entry to `enabled: true`, commit, push, and let Argo CD sync. Do not configure providers manually in the UI unless the same desired state is added to Git.

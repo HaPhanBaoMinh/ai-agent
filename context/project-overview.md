@@ -19,4 +19,4 @@ The target is local development only, not production cloud deployment.
 
 ## Shared context memory
 
-Durable project knowledge is stored in repo context files and seeded into Qdrant collection `project-context`. Agents should use Qdrant MCP to retrieve shared context instead of relying on per-session chat history.
+Durable project knowledge is stored in repo context files and seeded into Qdrant collection `project-context`. Agents should use Qdrant MCP to retrieve shared context instead of relying on per-session chat history. In `codex --profile nine-router`, shared context retrieval from `qdrant_context` should happen before answering when the prompt does not already contain the needed project fact. The active local Ollama model is `gemma3:4b`.
