@@ -136,3 +136,5 @@ Ollama is organized as one instance per local model. The active CPU-only instanc
 ## Durable context updates
 
 When a new durable fact, decision, operational rule, service endpoint, model layout, troubleshooting result, or user preference is discovered, update the appropriate repo context file before ending the task. Do not leave durable knowledge only in chat history. After updating context files, reseed Qdrant collection `project-context` so Codex, Cursor, and local agents can retrieve the same knowledge through MCP.
+
+Use the `qdrant_context` MCP server to retrieve shared project context before making cluster, GitOps, 9Router, Ollama, Qdrant, MCP, or Codex/Cursor integration decisions when the needed context is not already present in the current prompt.
