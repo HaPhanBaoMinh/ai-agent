@@ -101,7 +101,15 @@ data:
 
 
     def is_enabled(item):
-        return bool(item.get("enabled", True))
+        return isinstance(item, dict) and bool(item.get("enabled", True))
+
+
+    def normalize_list(value):
+        return value if isinstance(value, list) else []
+
+
+    def normalize_mapping(value):
+        return value if isinstance(value, dict) else {}
 
 
     def provider_key(item):
@@ -112,8 +120,8 @@ data:
 
 
     def ensure_custom_nodes(config, cookie):
-        nodes = get_json(config, cookie, "/api/provider-nodes", "nodes")
-        existing = {(node.get("name"), node.get("prefix")) for node in nodes}
+        nodes = normalize_list(get_json(config, cookie, "/api/provider-nodes", "nodes"))
+        existing = {(node.get("name"), node.get("prefix")) for node in nodes if isinstance(node, dict)}
         for node in config.get("customProviderNodes", []):
             if not is_enabled(node):
                 continue
@@ -144,8 +152,8 @@ data:
         for key in checks:
             if key in desired and current.get(key) != desired.get(key):
                 return True
-        desired_specific = desired.get("providerSpecificData") or {}
-        current_specific = current.get("providerSpecificData") or {}
+        desired_specific = normalize_mapping(desired.get("providerSpecificData"))
+        current_specific = normalize_mapping(current.get("providerSpecificData"))
         for key, value in desired_specific.items():
             if current_specific.get(key) != value:
                 return True
@@ -164,8 +172,8 @@ data:
 
 
     def ensure_providers(config, cookie):
-        connections = get_json(config, cookie, "/api/providers", "connections")
-        existing = {provider_key(connection): connection for connection in connections}
+        connections = normalize_list(get_json(config, cookie, "/api/providers", "connections"))
+        existing = {provider_key(connection): connection for connection in connections if isinstance(connection, dict)}
         for provider in config.get("providers", []):
             if not is_enabled(provider):
                 continue
@@ -187,8 +195,12 @@ data:
 
 
     def ensure_aliases(config, cookie):
-        aliases = get_json(config, cookie, "/api/models/alias", "aliases")
-        existing = {item.get("alias"): item.get("model") for item in aliases}
+        aliases_raw = get_json(config, cookie, "/api/models/alias", "aliases")
+        if isinstance(aliases_raw, dict):
+            aliases = [{"alias": alias, "model": model} for alias, model in aliases_raw.items()]
+        else:
+            aliases = normalize_list(aliases_raw)
+        existing = {item.get("alias"): item.get("model") for item in aliases if isinstance(item, dict)}
         for item in config.get("aliases", []):
             if not is_enabled(item):
                 continue
