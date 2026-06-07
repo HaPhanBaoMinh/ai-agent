@@ -1,5 +1,5 @@
 {{- if .Values.enabled }}
-{{- $configChecksum := toJson (dict "routerUrl" .Values.routerUrl "providers" .Values.providers "customProviderNodes" .Values.customProviderNodes "aliases" .Values.aliases) | sha256sum | trunc 8 -}}
+{{- $configChecksum := include (print $.Template.BasePath "/configmap.yaml") . | sha256sum | trunc 8 -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
