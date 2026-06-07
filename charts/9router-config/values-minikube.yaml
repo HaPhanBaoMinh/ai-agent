@@ -21,9 +21,10 @@ providers:
       baseUrl: http://ollama-qwen-coder.ai-platform.svc.cluster.local.:11434
   - name: Gemini API
     provider: gemini
-    enabled: false
+    enabled: true
     apiKeyEnv: GEMINI_API_KEY
     priority: 20
+    defaultModel: gemini-2.5-flash
   - name: OpenRouter
     provider: openrouter
     enabled: true
@@ -46,5 +47,7 @@ customProviderNodes: []
 aliases:
   - alias: local-coder
     model: ollama-local/qwen2.5-coder:3b
+  - alias: gemini-flash
+    model: gemini/gemini-2.5-flash
   - alias: openrouter-free
     model: openrouter/free

@@ -277,7 +277,7 @@ Default Minikube config creates the `ollama-local` provider and points it at:
 http://ollama-qwen-coder.ai-platform.svc.cluster.local.:11434
 ```
 
-Hosted providers are defined but disabled by default. To enable Gemini/OpenRouter/OpenAI/Groq, create `9router-provider-secrets`, change the provider entry to `enabled: true`, commit, push, and let Argo CD sync. OpenRouter free routing uses `openrouter/free`. Do not configure providers manually in the UI unless the same desired state is added to Git.
+Hosted providers are defined but disabled by default. To enable Gemini/OpenRouter/OpenAI/Groq, create `9router-provider-secrets`, change the provider entry to `enabled: true`, commit, push, and let Argo CD sync. Gemini is exposed with the `gemini-flash` alias mapped to `gemini/gemini-2.5-flash`. OpenRouter free routing uses `openrouter/free`. Do not configure providers manually in the UI unless the same desired state is added to Git.
 
 9Router stores UI changes in its PVC, so normal pod restarts do not erase UI settings. The GitOps seed Job prevents important provider config from depending on UI-only state.
 

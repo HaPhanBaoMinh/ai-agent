@@ -109,7 +109,7 @@ make logs-ollama-models
 
 The `9router-config` Argo CD app runs a Kubernetes Job that logs in to 9Router and seeds configured providers, custom provider nodes, and aliases from `charts/9router-config/values-minikube.yaml`.
 
-Default Minikube behavior seeds only `ollama-local`. Hosted providers stay disabled until their API keys exist in the `9router-provider-secrets` Secret and the provider entry is enabled in Git.
+Default Minikube behavior seeds only `ollama-local`. Hosted providers stay disabled until their API keys exist in the `9router-provider-secrets` Secret and the provider entry is enabled in Git. Gemini is available through the `gemini-flash` alias, which maps to `gemini/gemini-2.5-flash`.
 
 Check seed status:
 
