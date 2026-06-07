@@ -78,6 +78,18 @@ codex --profile nine-router
 
 The `nine-router` profile is user-level in `~/.codex/nine-router.config.toml`; provider configuration must not be stored in project `.codex/config.toml` because Codex ignores provider/auth keys in project-scoped config.
 
+After `codex login` on a new machine, run:
+
+```bash
+make setup-codex-profiles
+```
+
+This writes user-level Codex profiles and configures the `qdrant_context` MCP server. On machines outside the model host, keep this tunnel open before using `nine-router` or Qdrant MCP:
+
+```bash
+make tunnel-agent-platform
+```
+
 ## Hardware And Performance
 
 The model host `10.50.5.20` is an ASUS desktop with AMD Ryzen 7 5700G, 16 logical CPUs, and about 62 GiB RAM.

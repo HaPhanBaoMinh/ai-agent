@@ -5,7 +5,7 @@ ARGOCD_NAMESPACE ?= argocd
 TARGET_CONTEXT ?= minikube
 MODEL ?= qwen2.5-coder:7b
 
-.PHONY: minikube-start verify-cluster argocd-install argocd-port-forward helm-deps helm-lint helm-template deploy status port-forward-9router port-forward-qdrant port-forward-qdrant-mcp port-forward-ollama test-qdrant test-9router test-ollama status-models pull-local-model logs-9router logs-9router-config logs-qdrant logs-ollama logs-ollama-models seed-context-local build-qdrant-mcp-image build-context-seeder-image clean
+.PHONY: minikube-start verify-cluster argocd-install argocd-port-forward helm-deps helm-lint helm-template deploy status port-forward-9router port-forward-qdrant port-forward-qdrant-mcp port-forward-ollama test-qdrant test-9router test-ollama status-models pull-local-model logs-9router logs-9router-config logs-qdrant logs-ollama logs-ollama-models seed-context-local build-qdrant-mcp-image build-context-seeder-image setup-codex-profiles tunnel-agent-platform clean
 
 minikube-start:
 	minikube start
@@ -120,6 +120,12 @@ logs-ollama-models:
 
 seed-context-local:
 	QDRANT_URL=http://127.0.0.1:6333 COLLECTION_NAME=project-context python3 scripts/seed_context.py --context-dir context
+
+setup-codex-profiles:
+	scripts/setup_codex_profiles.sh
+
+tunnel-agent-platform:
+	scripts/tunnel_agent_platform.sh
 
 build-qdrant-mcp-image:
 	eval "$$(minikube docker-env)" && docker build -t qdrant-mcp:local -f charts/qdrant-mcp/Dockerfile charts/qdrant-mcp

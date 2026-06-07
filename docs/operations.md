@@ -128,3 +128,24 @@ make seed-context-local
 ```
 
 Codex and Cursor should use the same Qdrant MCP collection, `project-context`, so context is shared across tools and models.
+
+## Codex Profile Setup
+
+After logging in with Codex on a new machine, run:
+
+```bash
+make setup-codex-profiles
+```
+
+This creates user-level profiles:
+
+```bash
+codex --profile chatgpt
+codex --profile nine-router
+```
+
+For machines outside the model host, start tunnels for 9Router and Qdrant:
+
+```bash
+make tunnel-agent-platform
+```

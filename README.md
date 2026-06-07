@@ -150,6 +150,32 @@ make build-qdrant-mcp-image
 make build-context-seeder-image
 ```
 
+## Setup Codex Profiles
+
+After `codex login`, configure local Codex profiles and shared Qdrant MCP:
+
+```bash
+make setup-codex-profiles
+```
+
+On machines that are not the model host, open the 9Router and Qdrant tunnel before using `nine-router` or `qdrant_context`:
+
+```bash
+make tunnel-agent-platform
+```
+
+Use normal Codex mode:
+
+```bash
+codex --profile chatgpt
+```
+
+Use local 9Router mode:
+
+```bash
+codex --profile nine-router
+```
+
 ## Connect Codex CLI To 9Router
 
 ```bash
