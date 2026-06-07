@@ -69,11 +69,12 @@ def main() -> None:
 
     client = QdrantClient(url=qdrant_url)
     collections = {item.name for item in client.get_collections().collections}
-    if collection not in collections:
-        client.create_collection(
-            collection_name=collection,
-            vectors_config=VectorParams(size=vector_size, distance=distance),
-        )
+    if collection in collections:
+        client.delete_collection(collection_name=collection)
+    client.create_collection(
+        collection_name=collection,
+        vectors_config=VectorParams(size=vector_size, distance=distance),
+    )
 
     embedder = TextEmbedding(model_name=model_name)
     records = []
