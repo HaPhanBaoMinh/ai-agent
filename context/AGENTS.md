@@ -43,3 +43,7 @@ Use `charts/9router-config` to seed 9Router providers, custom provider nodes, an
 ## Model-scoped Ollama instances
 
 Ollama is organized as one instance per local model. The active CPU-only instance is `ollama-qwen-coder` running `qwen2.5-coder:7b`; `ollama-deepseek-r1` and `ollama-gemma3` are GitOps-defined but scaled to zero by default. Keep 9Router local provider config pointed at the active service unless another model is explicitly scaled up and registered.
+
+## Durable context updates
+
+When a new durable fact, decision, operational rule, service endpoint, model layout, troubleshooting result, or user preference is discovered, update the appropriate repo context file before ending the task. Do not leave durable knowledge only in chat history. After updating context files, reseed Qdrant collection `project-context` so Codex, Cursor, and local agents can retrieve the same knowledge through MCP.

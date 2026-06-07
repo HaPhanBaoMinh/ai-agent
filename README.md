@@ -18,7 +18,7 @@ Codex CLI and Cursor run locally. The cluster hosts router, context, and local m
 
 ## Cluster Scope
 
-The only allowed Kubernetes target is local Minikube on host `10.50.1.20`.
+The only allowed Kubernetes target is local Minikube on host `10.50.5.20`.
 
 - Workload namespace: `ai-platform`
 - Argo CD namespace: `argocd`

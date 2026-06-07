@@ -17,6 +17,7 @@ TYPE_BY_FILE = {
     "coding-conventions.md": "convention",
     "api-conventions.md": "api",
     "domain-glossary.md": "domain",
+    "cluster-runbook.md": "runbook",
 }
 
 

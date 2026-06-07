@@ -6,7 +6,7 @@
 make verify-cluster
 ```
 
-Check that the current context and node output identify Minikube on `10.50.1.20`.
+Check that the current context and node output identify Minikube on `10.50.5.20`.
 
 ## Deploy
 
@@ -117,3 +117,14 @@ Check seed status:
 kubectl -n ai-platform get jobs,pods -l app.kubernetes.io/name=9router-config
 make logs-9router-config
 ```
+
+## Shared Context Updates
+
+When durable platform knowledge changes, update `AGENTS.md`, `context/*.md`, or `docs/*.md`, then reseed Qdrant:
+
+```bash
+make port-forward-qdrant
+make seed-context-local
+```
+
+Codex and Cursor should use the same Qdrant MCP collection, `project-context`, so context is shared across tools and models.
